@@ -2,6 +2,7 @@
 
 
 # https://docs.python.org/3/library/curses.html
+# https://www.devdungeon.com/content/curses-programming-python#toc-11
 
 import _thread
 import os
