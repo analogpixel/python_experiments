@@ -91,9 +91,11 @@ def main(stdscr):
             debug(k)
             if k == 105: #i
                 task_list.append({'name': 'interupt', 'min': 0})
+                start=time.time()
                 refresh=True
             if k == 98: #b
                 task_list.append({'name': 'break', 'min': 0})
+                start=time.time()
                 refresh=True
             if k == 10:
                 a = read_todo()[0]
