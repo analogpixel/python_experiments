@@ -69,10 +69,10 @@ def main(stdscr):
 
             # update the history
             for idx, x in enumerate(reversed(task_list[0:-1])):
-                if idx > height-2:
+                if idx > height-4:
                     break
                 #debug("{},{},{}".format(idx,x,height-idx))
-                stdscr.addstr(height-idx-2,0, "{} : {}min".format(x['name'], x['min']), curses.color_pair(2))
+                stdscr.addstr(height-idx-3,0, "{} : {}min".format(x['name'], x['min']), curses.color_pair(2))
 
             # update current
             # TODO make this the default time in the task
@@ -81,7 +81,7 @@ def main(stdscr):
             else:
                 c = 1
 
-            stdscr.addstr(height-1,0, "{} : {}min".format(task_list[-1]['name'], task_list[-1]['min']), curses.color_pair(c) | curses.A_BOLD )
+            stdscr.addstr(height-2,0, "{} : {}min".format(task_list[-1]['name'], task_list[-1]['min']), curses.color_pair(c) | curses.A_BOLD )
     
             with open(state_file , "w") as f:
                 f.write(json.dumps(task_list))
