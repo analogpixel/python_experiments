@@ -61,6 +61,7 @@ def main(stdscr):
 
         if refresh or round(time.time() - start) % 60 == 0:
             curses.update_lines_cols()
+            height, width = stdscr.getmaxyx()
             stdscr.clear()
             stdscr.refresh()
             refresh=False
