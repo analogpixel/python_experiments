@@ -49,15 +49,50 @@ def main(stdscr):
     stdscr.nodelay(True)
     stdscr.refresh()
 
-    k = 0
     start=time.time()
-    refresh=False
-
     curses.init_pair(2, curses.COLOR_WHITE, curses.COLOR_BLACK)
     curses.init_pair(1, curses.COLOR_RED, curses.COLOR_WHITE)
     curses.init_pair(3, curses.COLOR_GREEN, curses.COLOR_BLACK)
 
-    while k != 27:
+    k = 0
+    refresh=False
+    first_run=True
+    new_task=False
+    while True:
+
+       
+        k = stdscr.getch()
+
+        # when starting get a task
+        if first_run:
+            k = 10
+            first_run=False
+
+        if k != -1:
+            #debug(k)
+            if k == 105: #i
+                new_task='interupt'
+            elif k == 98: #b
+                new_task='break'
+            elif k == 10: #<enter>
+                try:
+                    a = read_todo()[0]
+                    new_task=a
+                except:
+                    new_task=False
+            elif k == 27: #<esc>
+                new_task = 'quit'
+
+        if new_task:
+            if new_task == "quit":
+                stdscr.clear()
+                stdscr.refresh()
+                quit()
+
+            start=time.time()
+            task_list.append({'name': new_task, 'min': 0})
+            refresh=True
+            new_task=False
 
         if refresh or round(time.time() - start) % 60 == 0:
             curses.update_lines_cols()
@@ -82,30 +117,13 @@ def main(stdscr):
             else:
                 c = 1
 
+            # current task
             stdscr.addstr(height-2,0, "{} : {}min".format(task_list[-1]['name'], task_list[-1]['min']), curses.color_pair(c) | curses.A_BOLD )
     
+            stdscr.refresh()
             with open(state_file , "w") as f:
                 f.write(json.dumps(task_list))
-        
-        k = stdscr.getch()
-        if k != -1:
-            debug(k)
-            if k == 105: #i
-                task_list.append({'name': 'interupt', 'min': 0})
-                start=time.time()
-                refresh=True
-            if k == 98: #b
-                task_list.append({'name': 'break', 'min': 0})
-                start=time.time()
-                refresh=True
-            if k == 10:
-                a = read_todo()[0]
-                if a == "quit":
-                    quit()
-                start=time.time()
-                task_list.append({'name': a, 'min': 0})
-                refresh=True
-
+ 
         time.sleep(.1)
 
 curses.wrapper(main)
