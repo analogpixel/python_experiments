@@ -14,6 +14,8 @@ import json
 import sys
 import curses
 import asyncio
+import re
+import os.path
 
 state_file = "state.json"
 
@@ -27,7 +29,7 @@ def debug(s):
         f.write("{}\n".format(s))
 
 def read_todo():
-    path="/Users/mattpoepping/pcloud/reference/cli/todo/todo.txt"
+    path = re.search('TODO_DIR="(.[^"]*)', open( os.path.expanduser("~/.todo.cfg"), "r").read())[1] + "/todo.txt"
     todotxt = pytodotxt.TodoTxt(path)
     todotxt.parse()
 

@@ -6,5 +6,21 @@
   {
     "name": "pytimelcock add blog entry",
     "min": 0
+  },
+  {
+    "name": "break",
+    "min": 1
+  },
+  {
+    "name": "pytimelcock add blog entry",
+    "min": 33
+  },
+  {
+    "name": "break",
+    "min": 4
+  },
+  {
+    "name": "pytimeclock read todo.txt path location from todo.cfg",
+    "min": 0
   }
 ]

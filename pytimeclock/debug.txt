@@ -198,3 +198,8 @@
 410
 27
 27
+<re.Match object; span=(104, 159), match='TODO_DIR="/Users/mattpoepping/pcloud/reference/cl>
+<re.Match object; span=(104, 159), match='TODO_DIR="/Users/mattpoepping/pcloud/reference/cl>
+/Users/mattpoepping/pcloud/reference/cli/todotodo.txt
+/Users/mattpoepping/pcloud/reference/cli/todo/todo.txt
+/Users/mattpoepping/pcloud/reference/cli/todo/todo.txt
