@@ -31,10 +31,11 @@ def read_todo():
     todotxt = pytodotxt.TodoTxt(path)
     todotxt.parse()
 
-    a = ['quit','sleep', 'interupt', 'chat','browsing', 'break','walk','exercise','read', 'meditate']
+    a = []
     for task in todotxt.tasks:
         if not task.is_completed:
             a.append(task.description)
+    a = a + ['journal','quit','sleep', 'interupt', 'chat','browsing', 'break','walk','exercise','read', 'meditate']
     fzf = FzfPrompt()
     return fzf.prompt(a)
 
@@ -70,6 +71,10 @@ def main(stdscr):
 
         if k != -1:
             #debug(k)
+            if k == 117: #u
+                if len(task_list) > 1:
+                    task_list.pop() # undo last
+                    refresh=True
             if k == 105: #i
                 new_task='interupt'
             elif k == 98: #b
@@ -80,7 +85,7 @@ def main(stdscr):
                     new_task=a
                 except:
                     new_task=False
-            elif k == 27: #<esc>
+            elif k == 113 or k == 27: #<q> or <esc>
                 new_task = 'quit'
 
         if new_task:
@@ -122,7 +127,7 @@ def main(stdscr):
     
             stdscr.refresh()
             with open(state_file , "w") as f:
-                f.write(json.dumps(task_list))
+                f.write(json.dumps(task_list ,indent=2))
  
         time.sleep(.1)
 
