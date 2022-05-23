@@ -37,7 +37,7 @@ def read_todo():
     for task in todotxt.tasks:
         if not task.is_completed:
             a.append(task.description)
-    a = a + ['journal','sketchbook','quit','sleep', 'interupt', 'chat','browsing', 'break','walk','exercise','read', 'meditate']
+    a = a + ['journal','sketchbook','quit','sleep', 'interupt', 'chat','browsing', 'break','walk','exercise','read', 'meditate', 'Listen Music']
     fzf = FzfPrompt()
     return fzf.prompt(a)
 

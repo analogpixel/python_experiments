@@ -37,6 +37,74 @@
   },
   {
     "name": "journal",
+    "min": 1
+  },
+  {
+    "name": "journal",
+    "min": 17
+  },
+  {
+    "name": "break",
     "min": 0
+  },
+  {
+    "name": "walk",
+    "min": 37
+  },
+  {
+    "name": "break",
+    "min": 6
+  },
+  {
+    "name": "read",
+    "min": 32
+  },
+  {
+    "name": "break",
+    "min": 8
+  },
+  {
+    "name": "read",
+    "min": 40
+  },
+  {
+    "name": "meditate",
+    "min": 10
+  },
+  {
+    "name": "break",
+    "min": 84
+  },
+  {
+    "name": "read",
+    "min": 40
+  },
+  {
+    "name": "break",
+    "min": 102
+  },
+  {
+    "name": "Listen Music",
+    "min": 26
+  },
+  {
+    "name": "system to store URLs and download their text for processing",
+    "min": 80
+  },
+  {
+    "name": "break",
+    "min": 31
+  },
+  {
+    "name": "meditate",
+    "min": 31
+  },
+  {
+    "name": "sleep",
+    "min": 601
+  },
+  {
+    "name": "break",
+    "min": 19
   }
 ]
