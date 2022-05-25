@@ -105,6 +105,142 @@
   },
   {
     "name": "break",
+    "min": 0
+  },
+  {
+    "name": "rally wildcard cert",
+    "min": 28
+  },
+  {
+    "name": "journal",
+    "min": 9
+  },
+  {
+    "name": "rally wildcard cert",
+    "min": 8
+  },
+  {
+    "name": "interupt",
+    "min": 6
+  },
+  {
+    "name": "rally wildcard cert",
+    "min": 23
+  },
+  {
+    "name": "break",
+    "min": 73
+  },
+  {
+    "name": "walk",
+    "min": 54
+  },
+  {
+    "name": "break",
+    "min": 9
+  },
+  {
+    "name": "rally wildcard cert",
+    "min": 54
+  },
+  {
+    "name": "break",
+    "min": 15
+  },
+  {
+    "name": "rally wildcard cert",
+    "min": 15
+  },
+  {
+    "name": "break",
+    "min": 289
+  },
+  {
+    "name": "sleep",
+    "min": 626
+  },
+  {
+    "name": "daily pages",
+    "min": 30
+  },
+  {
+    "name": "unscheduled",
+    "min": 21
+  },
+  {
+    "name": "chat",
+    "min": 140
+  },
+  {
+    "name": "interupt",
+    "min": 120
+  },
+  {
+    "name": "unscheduled",
+    "min": 540
+  },
+  {
+    "name": "journal",
+    "min": 0
+  },
+  {
+    "name": "Planning",
+    "min": 3
+  },
+  {
+    "name": "meditate",
+    "min": 10
+  },
+  {
+    "name": "sleep",
+    "min": 609
+  },
+  {
+    "name": "Daily Pages",
+    "min": 24
+  },
+  {
+    "name": "unscheduled",
+    "min": 53
+  },
+  {
+    "name": "Daily Pages",
+    "min": 26
+  },
+  {
+    "name": "unscheduled",
+    "min": 3
+  },
+  {
+    "name": "pagerduty setup doc",
     "min": 19
+  },
+  {
+    "name": "unscheduled",
+    "min": 6
+  },
+  {
+    "name": "interupt",
+    "min": 81
+  },
+  {
+    "name": "pagerduty setup doc",
+    "min": 6
+  },
+  {
+    "name": "walk",
+    "min": 112
+  },
+  {
+    "name": "unscheduled",
+    "min": 4
+  },
+  {
+    "name": "build simple bayes-spam-filter in python then clojure",
+    "min": 12
+  },
+  {
+    "name": "interupt",
+    "min": 75
   }
 ]

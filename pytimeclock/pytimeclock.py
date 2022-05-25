@@ -37,7 +37,7 @@ def read_todo():
     for task in todotxt.tasks:
         if not task.is_completed:
             a.append(task.description)
-    a = a + ['journal','sketchbook','quit','sleep', 'interupt', 'chat','browsing', 'break','walk','exercise','read', 'meditate', 'Listen Music']
+    a = a + ['journal','sketchbook','quit','sleep', 'interupt', 'chat','browsing', 'unscheduled','walk','exercise','read', 'meditate', 'Listen Music','Daily Pages', 'Planning']
     fzf = FzfPrompt()
     return fzf.prompt(a)
 
@@ -73,14 +73,14 @@ def main(stdscr):
 
         if k != -1:
             #debug(k)
-            if k == 117: #u
+            if k == 100: #d
                 if len(task_list) > 1:
                     task_list.pop() # undo last
                     refresh=True
             if k == 105: #i
                 new_task='interupt'
-            elif k == 98: #b
-                new_task='break'
+            elif k == 117: #u
+                new_task='unscheduled'
             elif k == 10: #<enter>
                 try:
                     a = read_todo()[0]
