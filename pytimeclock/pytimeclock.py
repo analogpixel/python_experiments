@@ -28,6 +28,10 @@ def debug(s):
     with open("debug.txt", "a") as f:
         f.write("{}\n".format(s))
 
+def read_focus():
+    fzf = FzfPrompt()
+    return fzf.prompt(["math","art","music","devops"])
+
 def read_todo():
     path = re.search('TODO_DIR="(.[^"]*)', open( os.path.expanduser("~/.todo.cfg"), "r").read())[1] + "/todo.txt"
     todotxt = pytodotxt.TodoTxt(path)
@@ -81,7 +85,23 @@ def main(stdscr):
                 new_task='interupt'
             elif k == 117: #u
                 new_task='unscheduled'
-            elif k == 10: #<enter>
+            elif k == 102: #f
+                a = read_focus()[0]
+                tag = "+{}".format(a)
+
+                # if it already exists then remove it
+                if tag in task_list[-1]['name']:
+                    task_list[-1]['name'] = task_list[-1]['name'].replace(tag, '').strip()
+                # otherwise add it
+                else:
+                    task_list[-1]['name'] += " +" + a
+                refresh=True
+            elif k == 115 or k == 10: #<enter>
+
+                # add the line and then add a new task
+                if k == 115: #s
+                    task_list.append({'name': "---", "min": 0})
+
                 try:
                     a = read_todo()[0]
                     new_task=a
@@ -118,7 +138,10 @@ def main(stdscr):
                 if idx > height-4:
                     break
                 #debug("{},{},{}".format(idx,x,height-idx))
-                stdscr.addstr(height-idx-3,0, "{} : {}min".format(x['name'], x['min']), curses.color_pair(2))
+                if x['name'] == '---':
+                    stdscr.addstr(height-idx-3,0, "----------------", curses.color_pair(2))
+                else: 
+                    stdscr.addstr(height-idx-3,0, "{} : {}min".format(x['name'], x['min']), curses.color_pair(2))
 
             # update current
             # TODO make this the default time in the task
