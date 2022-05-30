@@ -10,4 +10,7 @@ spam_words = list(map(lambda x: x.strip(), " ".join(train_spam).split()))
 ham_words  = list(map(lambda x: x.strip(), " ".join(train_ham).split()))
 all_words = spam_words + ham_words
 
+# We can count how many spam emails have the word “send” and divide that by the total number of spam emails 
+for word in spam_words:
+
 print(all_words)

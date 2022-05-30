@@ -37,7 +37,7 @@ def read_todo():
     for task in todotxt.tasks:
         if not task.is_completed:
             a.append(task.description)
-    a = a + ['journal','sketchbook','quit','sleep', 'interupt', 'chat','browsing', 'unscheduled','walk','exercise','read', 'meditate', 'Listen Music','Daily Pages', 'Planning']
+    a = a + ['journal','sketchbook','quit','sleep', 'interupt', 'chat','browsing', 'unscheduled','walk','exercise','read', 'meditate', 'Listen Music','Daily Pages', 'Planning', 'Khan']
     fzf = FzfPrompt()
     return fzf.prompt(a)
 
@@ -91,6 +91,9 @@ def main(stdscr):
                 new_task = 'quit'
 
         if new_task:
+            # update the current task before replacing it
+            task_list[-1]['min'] = round((time.time() - start)/60)
+
             if new_task == "quit":
                 stdscr.clear()
                 stdscr.refresh()
