@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
 
-# https://docs.python.org/3/library/curses.html
-# https://www.devdungeon.com/content/curses-programming-python#toc-11
+# https://blessed.readthedocs.io/
 
-import _thread
+from __future__ import division, print_function
+
 import os
 import time
 from datetime import datetime
@@ -12,10 +12,13 @@ from pyfzf.pyfzf import FzfPrompt
 import pytodotxt
 import json
 import sys
-import curses
-import asyncio
 import re
 import os.path
+from blessed import Terminal
+from functools import partial
+
+term = Terminal()
+echo = partial(print, end='', flush=True)
 
 state_file = "state.json"
 
@@ -23,6 +26,30 @@ if os.path.exists(state_file):
     task_list = json.loads(open(state_file).read() )
 else:
     task_list = [ {'name': 'start', 'min': 0} ]
+
+def readline(term, init, width=90):
+    """A rudimentary readline implementation."""
+    echo( term.move_xy(1, term.height-1) + init )
+    text = init
+    while True:
+        inp = term.inkey()
+        if inp.code == term.KEY_ENTER:
+            break
+        elif inp.code == term.KEY_ESCAPE or inp == chr(3):
+            text = None
+            break
+        elif not inp.is_sequence and len(text) < width:
+            text += inp
+            echo(inp)
+        elif inp.code in (term.KEY_BACKSPACE, term.KEY_DELETE):
+            text = text[:-1]
+            # https://utcc.utoronto.ca/~cks/space/blog/unix/HowUnixBackspaces
+            #
+            # "When you hit backspace, the kernel tty line discipline rubs out
+            # your previous character by printing (in the simple case)
+            # Ctrl-H, a space, and then another Ctrl-H."
+            echo(u'\b \b')
+    return text
 
 def debug(s):
     with open("debug.txt", "a") as f:
@@ -43,48 +70,80 @@ def read_todo():
             a.append(task.description)
     a = a + ['journal','sketchbook','quit','sleep', 'interupt', 'chat','browsing', 'unscheduled','walk','exercise','read', 'meditate', 'Listen Music','Daily Pages', 'Planning', 'Khan', 'cooking']
     fzf = FzfPrompt()
-    return fzf.prompt(a)
+    return fzf.prompt(a)[0]
 
-def input_thread(stdscr):
-    while True:
-        stdscr.getch()
+def draw_tasklist(tasklist,index):
 
-def main(stdscr):
-    height, width = stdscr.getmaxyx()
-    curses.curs_set(0)
-    stdscr.clear()
-    stdscr.nodelay(True)
-    stdscr.refresh()
+    bw = lambda x: term.on_blue(term.bright_white(x))
 
-    start=time.time()
-    curses.init_pair(2, curses.COLOR_WHITE, curses.COLOR_BLACK)
-    curses.init_pair(1, curses.COLOR_RED, curses.COLOR_WHITE)
-    curses.init_pair(3, curses.COLOR_GREEN, curses.COLOR_BLACK)
+    i = len(tasklist)-1
+    h = term.height-2
+    echo( term.on_blue(term.clear) )
+    while i > 0 and h > 2: 
+        if i == index:
+            echo( term.move_xy(1,h) + bw("*"))
+        echo( term.move_xy(2,h) + bw(term.bright_white( tasklist[i]['name'])) )
+        h = h -1
+        i = i -1
 
-    k = 0
-    refresh=False
-    first_run=True
-    new_task=False
-    while True:
+    # update the timer
+    echo( term.move_xy(1, term.height-1), bw(term.bright_white( str(tasklist[-1]['min']) + " min" )))
 
-       
-        k = stdscr.getch()
+def main():
+    echo(term.move_yx(1, 1))
 
-        # when starting get a task
-        if first_run:
-            k = 10
-            first_run=False
+    inp = None
+    index = -1
+    updated=False
+    with term.hidden_cursor(), term.cbreak(), term.location():
+        while inp not in (u'q', u'Q'):
+            # https://blessed.readthedocs.io/en/latest/keyboard.html#keycodes
+            inp = term.inkey(timeout=0.04)
+            if inp.code == term.KEY_ENTER or index == -1:
+                task_list.append( {'name': read_todo(), 'min': 0 } )
+                index = len(task_list) -1
+                start = time.time()
+                updated = True
+            if inp in (u'd', u'D'):
+                del task_list[index]
+                if index > len(task_list) -1 :
+                    index = len(task_list) -1
+                updated = True
+            if inp.code == term.KEY_UP:
+                index = index - 1
+                updated = True
+            if inp.code == term.KEY_DOWN:
+                index = index + 1
+                if index > len(task_list)-1:
+                    index = len(task_list)-1
+                updated = True
+            if inp in (u'u', u'U'):
+                task_list.append( {'name': 'unscheduled', 'min': 0} )
+                updated=True
+                index = len(task_list) -1
+            if inp in (u'i', u'I'):
+                task_list.append( {'name': 'interupt', 'min': 0} )
+                updated=True
+                index = len(task_list) -1
+            if inp in (u'e', u'E'):
+                text = readline(term, task_list[index]['name'])
+                task_list[index]['name'] = text
+                updated=True
 
-        if k != -1:
-            #debug(k)
-            if k == 100: #d
-                if len(task_list) > 1:
-                    task_list.pop() # undo last
-                    refresh=True
-            if k == 105: #i
-                new_task='interupt'
-            elif k == 117: #u
-                new_task='unscheduled'
+            if  round(time.time() - start) % 60 == 0:
+                task_list[-1]['min'] = round((time.time() - start)/60)
+                updated = True
+
+            # Redraw the screen
+            if updated:
+                debug("Updated called")
+                draw_tasklist(task_list, index)
+                time.sleep(.1)
+                updated = False
+            
+            
+
+"""
             elif k == 102: #f
                 a = read_focus()[0]
                 tag = "+{}".format(a)
@@ -93,22 +152,9 @@ def main(stdscr):
                 if tag in task_list[-1]['name']:
                     task_list[-1]['name'] = task_list[-1]['name'].replace(tag, '').strip()
                 # otherwise add it
-                else:
-                    task_list[-1]['name'] += " +" + a
+            else:
+                task_list[-1]['name'] += " +" + a
                 refresh=True
-            elif k == 115 or k == 10: #<enter>
-
-                # add the line and then add a new task
-                if k == 115: #s
-                    task_list.append({'name': "---", "min": 0})
-
-                try:
-                    a = read_todo()[0]
-                    new_task=a
-                except:
-                    new_task=False
-            elif k == 113 or k == 27: #<q> or <esc>
-                new_task = 'quit'
 
         if new_task:
             # update the current task before replacing it
@@ -130,7 +176,7 @@ def main(stdscr):
             stdscr.clear()
             stdscr.refresh()
             refresh=False
-            
+
             task_list[-1]['min'] = round((time.time() - start)/60)
 
             # update the history
@@ -152,12 +198,14 @@ def main(stdscr):
 
             # current task
             stdscr.addstr(height-2,0, "{} : {}min".format(task_list[-1]['name'], task_list[-1]['min']), curses.color_pair(c) | curses.A_BOLD )
-    
+
             stdscr.refresh()
             with open(state_file , "w") as f:
                 f.write(json.dumps(task_list ,indent=2))
- 
+
         time.sleep(.1)
 
 curses.wrapper(main)
+"""
 
+main()
