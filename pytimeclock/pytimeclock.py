@@ -27,7 +27,7 @@ if os.path.exists(state_file):
 else:
     task_list = [ {'name': 'start', 'min': 0} ]
 
-def readline(term, init, width=90):
+def readline(term, init, width=120):
     """A rudimentary readline implementation."""
     echo( term.move_xy(0, term.height-1), term.on_red, term.clear_eol)
     #echo( term.move_xy(1, term.height-1) + init )
@@ -85,7 +85,12 @@ def draw_tasklist(tasklist,index):
     while i > 0 and h > 2: 
         if i == index:
             echo( term.move_xy(1,h) + bw("*"))
-        echo( term.move_xy(2,h) + bw(term.bright_white( tasklist[i]['name'])) )
+
+        if tasklist[i]['name'] == "---":
+            echo( term.move_xy(2,h) + bw(term.bright_white( "-----------" )))
+        else:
+            echo( term.move_xy(2,h) + bw(term.bright_white( "{}:{}".format( tasklist[i]['name'], tasklist[i]['min']) )))
+
         h = h -1
         i = i -1
 
@@ -113,6 +118,7 @@ def main():
                 del task_list[index]
                 if index > len(task_list) -1 :
                     index = len(task_list) -1
+                start = time.time() - task_list[-1]['min'] * 60
                 updated = True
             if inp.code == term.KEY_UP:
                 index = index - 1
@@ -124,15 +130,20 @@ def main():
                 updated = True
             if inp in (u'u', u'U'):
                 task_list.append( {'name': 'unscheduled', 'min': 0} )
+                start = time.time()
                 updated=True
                 index = len(task_list) -1
             if inp in (u'i', u'I'):
                 task_list.append( {'name': 'interupt', 'min': 0} )
+                start = time.time()
                 updated=True
                 index = len(task_list) -1
             if inp in (u'e', u'E'):
                 text = readline(term, task_list[index]['name'])
                 task_list[index]['name'] = text
+                updated=True
+            if inp in (u's', u'S'):
+                task_list.insert( index+1, {'name': '---', 'min': 0} )
                 updated=True
 
             if round(time.time() - start) % 60 == 0:
@@ -146,8 +157,8 @@ def main():
                 time.sleep(.1)
                 updated = False
              
-                #with open(state_file , "w") as f:
-                #    f.write(json.dumps(task_list ,indent=2))
+                with open(state_file , "w") as f:
+                    f.write(json.dumps(task_list ,indent=2))
 
            
 
