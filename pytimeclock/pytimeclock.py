@@ -29,7 +29,9 @@ else:
 
 def readline(term, init, width=90):
     """A rudimentary readline implementation."""
-    echo( term.move_xy(1, term.height-1) + init )
+    echo( term.move_xy(0, term.height-1), term.on_red, term.clear_eol)
+    #echo( term.move_xy(1, term.height-1) + init )
+    echo ( term.on_red, init)
     text = init
     while True:
         inp = term.inkey()
@@ -75,6 +77,7 @@ def read_todo():
 def draw_tasklist(tasklist,index):
 
     bw = lambda x: term.on_blue(term.bright_white(x))
+    gw = lambda x: term.on_green(term.bright_white(x))
 
     i = len(tasklist)-1
     h = term.height-2
@@ -87,7 +90,9 @@ def draw_tasklist(tasklist,index):
         i = i -1
 
     # update the timer
-    echo( term.move_xy(1, term.height-1), bw(term.bright_white( str(tasklist[-1]['min']) + " min" )))
+    #echo( term.move_xy(1, term.height-1), bw(term.bright_white( str(tasklist[-1]['min']) + " min" )))
+    echo( term.move_xy(0, term.height-1), term.on_green, term.clear_eol)
+    echo( gw(term.bright_white( str(tasklist[-1]['min']) + " min" )))
 
 def main():
     echo(term.move_yx(1, 1))
@@ -130,7 +135,7 @@ def main():
                 task_list[index]['name'] = text
                 updated=True
 
-            if  round(time.time() - start) % 60 == 0:
+            if round(time.time() - start) % 60 == 0:
                 task_list[-1]['min'] = round((time.time() - start)/60)
                 updated = True
 
@@ -140,72 +145,10 @@ def main():
                 draw_tasklist(task_list, index)
                 time.sleep(.1)
                 updated = False
-            
-            
+             
+                #with open(state_file , "w") as f:
+                #    f.write(json.dumps(task_list ,indent=2))
 
-"""
-            elif k == 102: #f
-                a = read_focus()[0]
-                tag = "+{}".format(a)
-
-                # if it already exists then remove it
-                if tag in task_list[-1]['name']:
-                    task_list[-1]['name'] = task_list[-1]['name'].replace(tag, '').strip()
-                # otherwise add it
-            else:
-                task_list[-1]['name'] += " +" + a
-                refresh=True
-
-        if new_task:
-            # update the current task before replacing it
-            task_list[-1]['min'] = round((time.time() - start)/60)
-
-            if new_task == "quit":
-                stdscr.clear()
-                stdscr.refresh()
-                quit()
-
-            start=time.time()
-            task_list.append({'name': new_task, 'min': 0})
-            refresh=True
-            new_task=False
-
-        if refresh or round(time.time() - start) % 60 == 0:
-            curses.update_lines_cols()
-            height, width = stdscr.getmaxyx()
-            stdscr.clear()
-            stdscr.refresh()
-            refresh=False
-
-            task_list[-1]['min'] = round((time.time() - start)/60)
-
-            # update the history
-            for idx, x in enumerate(reversed(task_list[0:-1])):
-                if idx > height-4:
-                    break
-                #debug("{},{},{}".format(idx,x,height-idx))
-                if x['name'] == '---':
-                    stdscr.addstr(height-idx-3,0, "----------------", curses.color_pair(2))
-                else: 
-                    stdscr.addstr(height-idx-3,0, "{} : {}min".format(x['name'], x['min']), curses.color_pair(2))
-
-            # update current
-            # TODO make this the default time in the task
-            if task_list[-1]['min'] > 20:
-                c = 3
-            else:
-                c = 1
-
-            # current task
-            stdscr.addstr(height-2,0, "{} : {}min".format(task_list[-1]['name'], task_list[-1]['min']), curses.color_pair(c) | curses.A_BOLD )
-
-            stdscr.refresh()
-            with open(state_file , "w") as f:
-                f.write(json.dumps(task_list ,indent=2))
-
-        time.sleep(.1)
-
-curses.wrapper(main)
-"""
+           
 
 main()
