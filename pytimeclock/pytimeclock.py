@@ -139,9 +139,14 @@ def main():
                 updated=True
                 index = len(task_list) -1
             if inp in (u'e', u'E'):
-                text = readline(term, task_list[index]['name'])
-                task_list[index]['name'] = text
+                text = readline(term, task_list[index]['name'] + "|" + str(task_list[index]['min']) )
+                (n,m) = text.split('|')
+                task_list[index]['name'] = n
+                task_list[index]['min'] = int(m)
                 updated=True
+                if index == len(task_list)-1:
+                    start = time.time() - task_list[-1]['min'] * 60
+
             if inp in (u's', u'S'):
                 task_list.insert( index+1, {'name': '---', 'min': 0} )
                 updated=True
